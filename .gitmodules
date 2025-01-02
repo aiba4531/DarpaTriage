@@ -8,3 +8,6 @@
 [submodule "ROS-WS/ws_offboard_control/src/px4_ros_com"]
 	path = ROS-WS/ws_offboard_control/src/px4_ros_com
 	url = https://github.com/PX4/px4_ros_com.git
+[submodule "ROS-WS/ws_offboard_control/src/px4_msgs"]
+	path = ROS-WS/ws_offboard_control/src/px4_msgs
+	url = https://github.com/PX4/px4_msgs.git
