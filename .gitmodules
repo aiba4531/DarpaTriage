@@ -5,3 +5,6 @@
 [submodule "Micro-XRCE-DDS-Agent"]
     path = Micro-XRCE-DDS-Agent
     url = git@github.com:eProsima/Micro-XRCE-DDS-Agent.git
+[submodule "ROS-WS/ws_offboard_control/src/px4_ros_com"]
+	path = ROS-WS/ws_offboard_control/src/px4_ros_com
+	url = https://github.com/PX4/px4_ros_com.git
