@@ -1,3 +1,7 @@
 [submodule "ws_offboard_control/src/px4_ros_com"]
-	url = git@github.com:aiba4531/px4_ros_com.git
-	path = ws_offboard_control/src/px4_ros_com
+    path = ws_offboard_control/src/px4_ros_com
+    url = git@github.com:aiba4531/px4_ros_com.git
+
+[submodule "Micro-XRCE-DDS-Agent"]
+    path = Micro-XRCE-DDS-Agent
+    url = git@github.com:eProsima/Micro-XRCE-DDS-Agent.git
