@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+
+import rospy
+from mavros_msgs.msg import State
+from mavros_msgs.srv import CommandBool, SetMode
+from geometry_msgs.msg import PoseStamped
+
+class AutonomousController:
+    def __init__(self):
+        # Initialize the ROS node
+        rospy.init_node('autonomous_controller', anonymous=True)
+
+        # MAVROS topics and services
+        self.state_sub = rospy.Subscriber("/mavros/state", State, self.state_callback)
+        self.local_pos_pub = rospy.Publisher("/mavros/setpoint_position/local", PoseStamped, queue_size=10)
+        self.arming_client = rospy.ServiceProxy("/mavros/cmd/arming", CommandBool)
+        self.set_mode_client = rospy.ServiceProxy("/mavros/set_mode", SetMode)
+
+        # State variables
+        self.current_state = None
+
+    def state_callback(self, msg):
+        """Callback for /mavros/state"""
+        self.current_state = msg
+
+    def arm_and_takeoff(self, target_altitude=3.0):
+        """Arms the drone and takes off to a specified altitude."""
+        rate = rospy.Rate(20)  # 20 Hz
+        
+        # Wait for the /mavros/state callback to initialize self.current_state
+        while not rospy.is_shutdown() and self.current_state is None:
+            rospy.loginfo("Waiting for state information...")
+            rate.sleep()
+
+        # Wait for FCU connection
+        while not rospy.is_shutdown() and not self.current_state.connected:
+            rospy.loginfo("Waiting for FCU connection...")
+            rate.sleep()
+
+        # Send a few setpoints before starting
+        pose = PoseStamped()
+        pose.pose.position.x = 0
+        pose.pose.position.y = 0
+        pose.pose.position.z = target_altitude
+
+        for _ in range(100):
+            self.local_pos_pub.publish(pose)
+            rate.sleep()
+
+        # Change mode to GUIDED and arm the drone
+        rospy.loginfo("Setting mode to GUIDED...")
+        self.set_mode_client(base_mode=0, custom_mode="GUIDED")
+        rospy.loginfo("Arming the drone...")
+        self.arming_client(value=True)
+
+        # Maintain target altitude
+        while not rospy.is_shutdown():
+            self.local_pos_pub.publish(pose)
+            rate.sleep()
+
+if __name__ == "__main__":
+    try:
+        controller = AutonomousController()
+        controller.arm_and_takeoff()
+    except rospy.ROSInterruptException:
+        pass

@@ -1,0 +1,8 @@
+prefix=/home/aidanbagley/dev/DarpaTriage/catkin_ws/devel
+
+Name: autonomous_drone
+Description: Description of autonomous_drone
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
