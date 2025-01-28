@@ -275,3 +275,43 @@ mavproxy.py --master=127.0.0.1:14550 --out=udp:127.0.0.1:14552
 roslaunch autonomous_drone autonomous_control.launch
 ```
 Before running the Launch script, make sure GCS says pre-armed check is good. Afterwards you should see the drone autonomously take off and land!
+
+## Create a Mixed Integer Linear Program to solve the Traveling Salesman Problem
+35. Create a python script to solve the TSP
+```bash
+cd catkin_ws/src/autonomous_drone/scripts
+touch tsp_solver.py
+pip install pulp
+```
+36. Add code similar to the example file in the tsp_solver.py file to solve the TSP.
+37. Add the following to the top of the autonomous_control.py file to import the tsp_solver.py file and solve the TSP.
+```bash
+# Import system and os so that launch script knows to add the scripts directory to the Python path
+import sys
+import os
+# Add the scripts directory to the Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Import TSP solver 
+import tsp_solver
+```
+38. Add the following to the autonomous_control.py file after takeoff to solve the TSP and navigate to the waypoints.
+```bash
+ # Generate random targets
+num_targets = 10
+targets = tsp_solver.generate_random_targets(num_targets)
+# Solve TSP
+tour, targets, cost = tsp_solver.solve_tsp_milp(targets)
+# Fly to each target in the TSP solution
+for i, j in tour:
+  rospy.loginfo(f"Flying to Target {j}...")
+  self.target_pose.header.stamp = rospy.Time.now()
+  self.target_pose.pose.position.x = targets[j][0]
+  self.target_pose.pose.position.y = targets[j][1]
+  self.target_pose.pose.position.z = target_altitude
+  while not rospy.is_shutdown() and not self.reached_waypoint(self.current_pose, self.target_pose):
+      self.target_pose.header.stamp = rospy.Time.now()
+      self.local_pos_pub.publish(self.target_pose)
+      rate.sleep()
+```
+This should randomly generate 10 targets, solve the TSP, and navigate to each target in the TSP solution generating optimal waypoints for the drone to navigate to.
+
