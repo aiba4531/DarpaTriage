@@ -1,12 +1,5 @@
 <launch>
   <node pkg="autonomous_drone" type="autonomous_control.py" name="autonomous_control" output="screen" />
-  <!-- <node pkg="mavros" type="mavros_node" name="mavros" output="screen">
-    <param name="fcu_url" value="udp://127.0.0.1:14551@14551" />
-    <param name="gcs_url" value="" />
-    <param name="target_system_id" value="1" />
-    <param name="pluginlists_url" value="$(find mavros)/launch/apm_pluginlists.yaml" />
-    <param name="config_url" value="$(find mavros)/launch/apm_config.yaml" />
-  </node> -->
   <include file="$(find mavros)/launch/apm.launch">
     <arg name="fcu_url" value="udp://127.0.0.1:14551@14551" />
   </include>
