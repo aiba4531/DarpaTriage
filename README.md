@@ -1,12 +1,13 @@
 # DARPA Triage Project
 
 ## Description
-The **DARPA Triage** project is a set of tools for autonomous drone control, including takeoff, navigation, and landing capabilities. It integrates with **MAVROS** for communication with the drone.
+The **DARPA Triage** project is a set of tools for autonomous drone control, including takeoff, navigation, and landing capabilities. It integrates Ardupilot with **MAVROS** enabling communication between an onboard computer and a Pixhawk autopilot.
 
 ## Features
 - **Autonomous Takeoff**
 - **Navigation to Target Altitudes**
 - **Drone State Monitoring**
+- **Autonomous Landing**
 
 ## Prerequisites
 - **Ubuntu 20.04**
@@ -71,7 +72,7 @@ source ~/.bashrc
 ```bash
 sudo apt install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool 
 ```
-8. Initialize rosdep.
+8. Initialize ROS dependencies.
 ```bash
 sudo rosdep init
 rosdep update
@@ -126,7 +127,7 @@ catkin_make
 ```
 
 ### If you have any issues with the above steps, please refer to the [Ardupilot](https://ardupilot.org/dev/docs/building-setup-linux.html) and [ROS](http://wiki.ros.org/noetic/Installation/Ubuntu) documentation.
-### If a CC1 error occurs, try running the following commands to create a swap file for compilation.:
+### If a CC1Plus error occurs, try running the following commands to create a swap file for compilation.
 ```bash
 sudo fallocate -l 8G /swapfile
 sudo chmod 600 /swapfile
@@ -171,7 +172,8 @@ sim_vehicle.py -v ArduCopter -f gazebo-iris --console --out=127.0.0.1:14550 --ou
 ```bash
 gazebo --verbose worlds/iris_arducopter_demo.world
 ```
-If you see the Iris drone in the Gazebo world, you have successfully installed the necessary software.
+If you see the a drone in the Gazebo world with "[ArduCopterPlugin.cc:584] ArduCopter controller online detected." in Gazebo terminal, you have successfully installed the necessary software!
+
 If you see an error like Main Loop Frequnecy too slow, try running the following commands:
 ```bash
 sudo nano /usr/share/gazebo-11/worlds/iris_arducopter_demo
@@ -202,6 +204,7 @@ rostopic list
 rostopic echo /mavros/state
 ```
 You should see a list of potential topics and the state of the drone. If it says connected = True, you have successfully connected to the drone.
+
 25. Try running the following command to arm the drone in the SITL terminal:
 ```bash
 mode guided
@@ -222,6 +225,7 @@ touch autonomous_control.py
 chmod +x autonomous_control.py
 ```
 See the example file inside the autonomous_drone/scripts directory for an example of how to create a simple autonomous control script.
+
 27. Edit CMakeLists.txt to include the Python script by adding this to the end of the file:
 ```bash
 # Install Python scripts
@@ -229,6 +233,7 @@ catkin_install_python(PROGRAMS
   scripts/autonomous_control.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+```
 28. Create a launch file to run the script.
 ```bash
 cd autonomous_drone
